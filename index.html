@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>やさしい家計簿</title>
+<meta name="theme-color" content="#d98a9e">
+<meta name="description" content="毎日開きたくなる、やさしい家計入力ツール">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="icon" href="icons/icon-192.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,300..500,0..1,0..200" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div id="app">
+
+  <div class="toast" id="toast"><span class="material-symbols-rounded">check_circle</span><span id="toastText">保存しました</span></div>
+
+  <!-- ============ ホーム ============ -->
+  <section class="screen" id="screen-home">
+    <div class="greet" id="greetText">こんにちは</div>
+    <div class="page-title" id="monthTitle">今月の記録</div>
+
+    <div class="balance-card">
+      <div class="balance-label">今月の支出</div>
+      <div class="balance-amount" id="totalAmount">¥0</div>
+      <div class="balance-sub">
+        <span class="pill" id="diffPill">先月と比較中…</span>
+        <span class="pill" id="budgetPill">予算を確認中…</span>
+      </div>
+    </div>
+
+    <div class="section-title">
+      <span>最近の記録</span>
+      <button class="link-btn" data-nav="analysis">分析を見る</button>
+    </div>
+    <div id="recentList"></div>
+  </section>
+
+  <!-- ============ 入力（追加・編集） ============ -->
+  <section class="screen" id="screen-input">
+    <div class="input-head">
+      <button class="icon-btn" data-nav="home"><span class="material-symbols-rounded">close</span></button>
+      <div class="input-title" id="inputHeadTitle">支出を記録</div>
+      <button class="icon-btn" id="cameraBtn" title="将来：レシートOCR"><span class="material-symbols-rounded">photo_camera</span></button>
+    </div>
+
+    <div class="amount-display">
+      <span class="yen">¥</span><span class="num" id="amountNum">0</span>
+    </div>
+
+    <div class="cat-scroll" id="catScroll"></div>
+
+    <div class="field">
+      <span class="material-symbols-rounded">storefront</span>
+      <input type="text" id="storeInput" placeholder="店舗名">
+    </div>
+    <div class="field">
+      <span class="material-symbols-rounded">calendar_today</span>
+      <input type="date" id="dateInput">
+    </div>
+
+    <div class="keypad" id="keypad">
+      <button class="key" data-k="1">1</button><button class="key" data-k="2">2</button><button class="key" data-k="3">3</button>
+      <button class="key" data-k="4">4</button><button class="key" data-k="5">5</button><button class="key" data-k="6">6</button>
+      <button class="key" data-k="7">7</button><button class="key" data-k="8">8</button><button class="key" data-k="9">9</button>
+      <button class="key func" data-k="C">C</button><button class="key" data-k="0">0</button><button class="key func" data-k="back">⌫</button>
+    </div>
+
+    <div style="height:180px;"></div>
+
+    <div class="save-bar">
+      <button class="save-btn" id="saveBtn">保存する</button>
+      <button class="delete-link" id="deleteBtn" style="display:none;">この記録を削除する</button>
+    </div>
+  </section>
+
+  <!-- ============ 分析 ============ -->
+  <section class="screen" id="screen-analysis">
+    <div class="page-title">カテゴリ別の支出</div>
+    <div class="balance-card">
+      <div class="balance-label">今月の合計</div>
+      <div class="balance-amount" id="analysisTotal">¥0</div>
+    </div>
+    <div class="section-title"><span>内訳</span></div>
+    <div id="categoryBars"></div>
+  </section>
+
+  <!-- ============ 設定 ============ -->
+  <section class="screen" id="screen-settings">
+    <div class="page-title">設定</div>
+
+    <div class="settings-card">
+      <div class="settings-row">
+        <span class="label"><span class="material-symbols-rounded">dark_mode</span>ダークモード</span>
+        <label class="switch"><input type="checkbox" id="darkToggle"><span class="slider"></span></label>
+      </div>
+      <div class="settings-row">
+        <span class="label"><span class="material-symbols-rounded">savings</span>今月の予算</span>
+        <input type="number" id="budgetInput" step="1000">
+      </div>
+    </div>
+
+    <div class="section-title"><span>データ連携（プロトタイプ）</span></div>
+    <button class="import-btn" id="importBtn">
+      <span class="material-symbols-rounded">mail</span>
+      Gmailから取り込む（サンプル）
+    </button>
+    <p class="footer-note">
+      本実装では、ここでGoogleアカウントにログインし、Gmail APIでカード利用通知メールを取得します。
+      今はサンプルメールで取り込み・自動分類・重複除外の動きを確認できます。
+    </p>
+
+    <div class="section-title" style="margin-top:20px;"><span>データ管理</span></div>
+    <div class="settings-card">
+      <div class="settings-row">
+        <span class="label"><span class="material-symbols-rounded">delete_sweep</span>すべての記録を削除</span>
+        <button class="link-btn" id="resetBtn" style="color:#c96b6b;">削除する</button>
+      </div>
+    </div>
+  </section>
+
+  <button class="fab" id="fabAdd"><span class="material-symbols-rounded">add</span></button>
+
+  <nav class="tabbar" id="tabbar">
+    <button class="tab" data-nav="home"><span class="material-symbols-rounded">home</span>ホーム</button>
+    <button class="tab" data-nav="analysis"><span class="material-symbols-rounded">bar_chart</span>分析</button>
+    <button class="tab" data-nav="settings"><span class="material-symbols-rounded">settings</span>設定</button>
+  </nav>
+
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
